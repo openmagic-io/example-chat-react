@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useXmtp from '../hooks/useXmtp'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
@@ -11,26 +11,27 @@ import NavigationPanel from './NavigationPanel'
 import XmtpInfoPanel from './XmtpInfoPanel'
 import UserMenu from './UserMenu'
 import BackArrow from './BackArrow'
+import KnownSendersModal from '../components/KnownSendersModal'
 
 const NavigationColumnLayout: React.FC = ({ children }) => (
-  <aside className="flex w-full md:w-84 flex-col flex-grow fixed inset-y-0">
-    <div className="flex flex-col flex-grow md:border-r md:border-gray-200 bg-white overflow-y-auto">
+  <aside className="fixed inset-y-0 flex flex-col flex-grow w-full md:w-84">
+    <div className="flex flex-col flex-grow overflow-y-auto bg-white md:border-r md:border-gray-200">
       {children}
     </div>
   </aside>
 )
 
 const NavigationHeaderLayout: React.FC = ({ children }) => (
-  <div className="h-14 bg-p-600 flex items-center justify-between flex-shrink-0 px-4">
+  <div className="flex items-center justify-between flex-shrink-0 px-4 h-14 bg-p-600">
     <Link href="/" passHref={true}>
-      <img className="h-8 w-auto" src="/xmtp-icon.png" alt="XMTP" />
+      <img className="w-auto h-8" src="/xmtp-icon.png" alt="XMTP" />
     </Link>
     {children}
   </div>
 )
 
 const TopBarLayout: React.FC = ({ children }) => (
-  <div className="sticky top-0 z-10 flex-shrink-0 flex bg-zinc-50 border-b border-gray-200 md:bg-white md:border-0">
+  <div className="sticky top-0 z-10 flex flex-shrink-0 border-b border-gray-200 bg-zinc-50 md:bg-white md:border-0">
     {children}
   </div>
 )
@@ -53,7 +54,7 @@ const ConversationLayout: React.FC = ({ children }) => {
   return (
     <>
       <TopBarLayout>
-        <div className="md:hidden flex items-center ml-3">
+        <div className="flex items-center ml-3 md:hidden">
           <BackArrow onClick={handleBackArrowClick} />
         </div>
         <RecipientControl
@@ -67,6 +68,8 @@ const ConversationLayout: React.FC = ({ children }) => {
 }
 
 const Layout: React.FC = ({ children }) => {
+  const [knownSendersModalOpen, setKnownSendersModalOpen] = useState(false)
+
   const {
     connect: connectXmtp,
     disconnect: disconnectXmtp,
@@ -123,6 +126,10 @@ const Layout: React.FC = ({ children }) => {
         />
       </Head>
       <div>
+        <KnownSendersModal
+          open={knownSendersModalOpen}
+          setOpen={setKnownSendersModalOpen}
+        />
         <NavigationView>
           <NavigationColumnLayout>
             <NavigationHeaderLayout>
@@ -132,6 +139,7 @@ const Layout: React.FC = ({ children }) => {
             <UserMenu
               onConnect={handleConnect}
               onDisconnect={handleDisconnect}
+              openKnownSendersModal={() => setKnownSendersModalOpen(true)}
             />
           </NavigationColumnLayout>
         </NavigationView>

@@ -21,6 +21,7 @@
     "url": "https://github.com/xmtp/example-chat-react/issues"
   },
   "dependencies": {
+    "@alch/alchemy-web3": "^1.4.2",
     "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^1.0.5",
     "@xmtp/xmtp-js": "^4.0.0",
