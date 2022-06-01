@@ -22,10 +22,14 @@ export default function Toggle({
           className="font-medium text-gray-900 text-md"
           passive
         >
-          {label ? label : <span className="text-gray-500">No Name</span>}
+          {label ? (
+            truncate(label, 30)
+          ) : (
+            <span className="text-gray-500">No Name</span>
+          )}
         </Switch.Label>
         <Switch.Description as="p" className="text-sm text-gray-500 ">
-          {truncate(subtext, 30)}
+          {truncate(subtext, 36)}
         </Switch.Description>
       </span>
       <Switch
