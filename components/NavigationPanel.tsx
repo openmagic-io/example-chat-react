@@ -3,6 +3,7 @@ import { ChatIcon } from '@heroicons/react/outline'
 import { ArrowSmRightIcon } from '@heroicons/react/solid'
 import useXmtp from '../hooks/useXmtp'
 import ConversationsList from './ConversationsList'
+import ConversationsPanel from './ConversationsPanel'
 import Loader from './Loader'
 
 type NavigationPanelProps = {
@@ -60,55 +61,6 @@ const ConnectButton = ({ onConnect }: ConnectButtonProps): JSX.Element => {
         <ArrowSmRightIcon className="h-4" />
       </div>
     </button>
-  )
-}
-
-const ConversationsPanel = (): JSX.Element => {
-  const { conversations, loadingConversations, client } = useXmtp()
-  if (!client) {
-    return (
-      <Loader
-        headingText="Awaiting signatures..."
-        subHeadingText="Use your wallet to sign"
-        isLoading
-      />
-    )
-  }
-  if (loadingConversations) {
-    return (
-      <Loader
-        headingText="Loading conversations..."
-        subHeadingText="Please wait a moment"
-        isLoading
-      />
-    )
-  }
-
-  return conversations && conversations.length > 0 ? (
-    <nav className="flex-1 pb-4 space-y-1">
-      <ConversationsList conversations={conversations} />
-    </nav>
-  ) : (
-    <NoConversationsMessage />
-  )
-}
-
-const NoConversationsMessage = (): JSX.Element => {
-  return (
-    <div className="flex flex-col flex-grow justify-center">
-      <div className="flex flex-col items-center px-4 text-center">
-        <ChatIcon
-          className="h-8 w-8 mb-1 stroke-n-200 md:stroke-n-300"
-          aria-hidden="true"
-        />
-        <p className="text-xl md:text-lg text-n-200 md:text-n-300 font-bold">
-          Your message list is empty
-        </p>
-        <p className="text-lx md:text-md text-n-200 font-normal">
-          There are no messages in this wallet
-        </p>
-      </div>
-    </div>
   )
 }
 
