@@ -8,15 +8,42 @@ type KnownSendersModalProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type nftContractsType = {
+  [contract: string]: string
+}
+
 export default function KnownSendersModal({
   open,
   setOpen,
 }: KnownSendersModalProps) {
   const { nfts } = useFilters()
   const [activeNfts, setActiveNfts] = useState<Array<boolean>>([])
+  const [groupedNfts, setGroupedNfts] = useState<
+    { name: string; contract: string }[]
+  >([])
 
+  // group NFTs by contract
   useEffect(() => {
-    setActiveNfts(new Array(nfts?.length).fill(true))
+    const nftContracts: nftContractsType = {}
+    nfts?.forEach((nft) => {
+      if (!(nft.contract.address in nftContracts)) {
+        nftContracts[nft.contract.address] = nft.title
+      } else {
+        const curTitle = nftContracts[nft.contract.address]
+        nftContracts[nft.contract.address] = curTitle + ', ' + nft.title
+      }
+    })
+
+    const tempGroupedNfts: { name: string; contract: string }[] = []
+    Object.keys(nftContracts).forEach((contract) => {
+      const groupedNft = {
+        contract,
+        name: nftContracts[contract],
+      }
+      tempGroupedNfts.push(groupedNft)
+    })
+    setGroupedNfts(tempGroupedNfts)
+    setActiveNfts(new Array(tempGroupedNfts?.length).fill(true))
   }, [nfts])
 
   const toggleEnabledAtIdx = (idx: number) => {
@@ -68,11 +95,11 @@ export default function KnownSendersModal({
                   </div>
                 </div>
                 <div className="px-4 my-4 overflow-y-scroll max-h-96">
-                  {nfts?.map((nft, idx) => (
+                  {groupedNfts?.map((nft, idx) => (
                     <Toggle
-                      key={nft.title}
-                      label={nft.title}
-                      subtext={nft.contract.address}
+                      key={nft.name}
+                      label={nft.name}
+                      subtext={nft.contract}
                       enabled={activeNfts[idx]}
                       toggleEnabled={() => toggleEnabledAtIdx(idx)}
                     />
